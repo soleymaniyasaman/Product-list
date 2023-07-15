@@ -21,7 +21,7 @@ const Layout = () => {
                     </button>
                     <button
                         className="p-2 font-bold">
-                        Arbit Blog
+                        Yasaman Soleymani
                     </button>
 
                 </div>
