@@ -3,39 +3,45 @@ import { useDispatch } from "react-redux";
 import { BiArrowBack, BiPencil } from 'react-icons/bi';
 import { Link, useNavigate } from "react-router-dom";
 import { addNewPost } from "../data/postsSlice";
+import { v4 as uuidv4 } from 'uuid';
+
 
 const AddNewPost = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const [title, setTitle] = useState()
-    const [content, setContent] = useState()
+    const [body, setBody] = useState()
     const [addRequestStatus, setAddRequestStatus] = useState(false)
 
     const onTitleChanged = e => setTitle(e.target.value)
-    const onContentChanged = e => setContent(e.target.value)
+    const onContentChanged = e => setBody(e.target.value)
 
     const canSave =
-        [title, content].every(Boolean) && !addRequestStatus
-    console.log(canSave)
-
+        [title, body].every(Boolean) && !addRequestStatus
 
     const onSavePostClicked = async () => {
         if (canSave) {
             try {
-                setAddRequestStatus(true)
-                await dispatch(addNewPost({ title, content, userId: 1 })).unwrap()
-                setTitle('')
-                setContent('')
-                // navigate('/')
-
+                setAddRequestStatus(true);
+                const newPost = {
+                    id: uuidv4(), // Generate a unique id
+                    title,
+                    body,
+                    userId: 1
+                };
+                await dispatch(addNewPost(newPost)).unwrap();
+                setTitle('');
+                setBody('');
+                navigate('/');
             } catch (err) {
-                console.error('Failed to save the post: ', err)
+                console.error('Failed to save the post: ', err);
             } finally {
-                setAddRequestStatus(false)
+                setAddRequestStatus(false);
             }
         }
-    }
+    };
+
 
     const onCancelPostClicked = () => {
         navigate('/')
@@ -79,7 +85,7 @@ const AddNewPost = () => {
                                 name="postDetail"
                                 id="postDetail"
                                 className="flex flex-wrap w-full rounded-md border-gray-300 pl-7 pr-12 py-8 font-bold focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                value={content}
+                                value={body}
                                 onChange={onContentChanged}
                             />
                         </div>

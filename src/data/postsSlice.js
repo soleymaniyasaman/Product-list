@@ -52,7 +52,8 @@ const postsSlice = createSlice({
                 state.error = action.error.message
             })
             .addCase(addNewPost.fulfilled, (state, action) => {
-                state.posts.push(action.payload)
+                state.posts = [action.payload, ...state.posts];
+                state.loading = false;
             })
             .addCase(fetchPostsUpdate.fulfilled, (state, action) => {
                 state.loading = false

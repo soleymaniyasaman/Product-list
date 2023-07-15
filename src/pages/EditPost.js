@@ -1,46 +1,47 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BiArrowBack, BiPencil } from 'react-icons/bi';
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { addNewPost, fetchPostsDelete, fetchPostsUpdate, selectPostById } from "../data/postsSlice";
+import { fetchPostsUpdate, fetchPostsDelete, selectPostById } from "../data/postsSlice";
 
 const EditPost = () => {
     const { postId } = useParams();
-    const post = useSelector(state => selectPostById(state, postId));
+    const post = useSelector((state) => selectPostById(state, postId));
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const [title, setTitle] = useState(post.title)
-    const [content, setContent] = useState(post.body)
+    const [title, setTitle] = useState("");
+    const [content, setContent] = useState("");
+    console.log("post", post)
+    useEffect(() => {
+        if (post) {
+            setTitle(post.title);
+            setContent(post.body);
+        }
+    }, [post]);
 
-    const onTitleChanged = e => setTitle(e.target.value)
-    const onContentChanged = e => setContent(e.target.value)
-
-    let payload = {
-        title: title,
-        body: content,
-    }
-    let addCase = {
-
-    }
+    const onTitleChanged = (e) => setTitle(e.target.value);
+    const onContentChanged = (e) => setContent(e.target.value);
 
     const onSavePostClicked = () => {
         if (postId && title && content) {
-            dispatch(fetchPostsUpdate({ payload: payload, postId: postId }))
-            navigate('/')
+            const payload = {
+                title: title,
+                body: content,
+            };
+            dispatch(fetchPostsUpdate({ payload: payload, postId: postId }));
+            navigate('/');
         }
-    }
+    };
 
     const onDeletePostClicked = () => {
-        dispatch(fetchPostsDelete({ postId: postId }))
-        navigate('/')
-    }
+        dispatch(fetchPostsDelete({ postId: postId }));
+        navigate('/');
+    };
 
     const onAddPostClicked = () => {
-        navigate('/posts/add')
-    }
-
-
+        navigate('/posts/add');
+    };
 
     return (
         <div className="container">
@@ -50,9 +51,9 @@ const EditPost = () => {
                 </Link>
                 Posts
             </div>
-            {post.loading && <div>Loading ...</div>}
+            {post?.loading && <div>Loading ...</div>}
             {!post.loading && post.error ? <div>Error:{post.error}</div> : null}
-            {!post.loading &&
+            {!post.loading && (
                 <div className="grid grid-cols-2 gap-x-1 mx-16 mt-8">
                     <div>
                         <button type="button" className="flex items-center font-bold mt-4 mb-4 float-right bg-blue-600 px-3 py-2 rounded-md text-white" onClick={onAddPostClicked}>
@@ -100,8 +101,9 @@ const EditPost = () => {
                         </form>
                     </div>
                 </div>
-            }
+            )}
         </div>
-    )
-}
+    );
+};
+
 export default EditPost;
