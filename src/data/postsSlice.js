@@ -21,11 +21,9 @@ export const fetchPostsUpdate = createAsyncThunk('posts/fetchPostsUpdate', async
 
 })
 export const fetchPostsDelete = createAsyncThunk('posts/fetchPostsDelete', async ({ postId }) => {
-    return await axios
-        .delete(`https://jsonplaceholder.typicode.com/posts/${postId}`)
-        .then((res) => res.data)
-
-})
+    await axios.delete(`https://jsonplaceholder.typicode.com/posts/${postId}`);
+    return postId;
+});
 
 export const addNewPost = createAsyncThunk('posts/addNewPost', async (initialPost) => {
     return await axios
@@ -69,8 +67,8 @@ const postsSlice = createSlice({
             })
             .addCase(fetchPostsDelete.fulfilled, (state, action) => {
                 state.loading = false
-                const indexOfId = state.posts.indexOf(action.payload)
-                state.posts.splice(indexOfId, 1)
+                const deletedPostId = action.payload;
+                state.posts = state.posts.filter(post => post.id !== deletedPostId);
 
             })
     },
@@ -80,5 +78,5 @@ export default postsSlice.reducer
 
 export const selectAllPosts = (state) => state.posts.posts
 
-export const selectPostById = (state, postId) => state?.posts?.posts?.find((post) => post.id === postId ? postId : postId)
+export const selectPostById = (state, postId) => state?.posts?.posts?.find((post) => post.id === parseInt(postId))
 

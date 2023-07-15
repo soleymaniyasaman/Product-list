@@ -6,6 +6,7 @@ import { fetchPostsUpdate, fetchPostsDelete, selectPostById } from "../data/post
 
 const EditPost = () => {
     const { postId } = useParams();
+    console.log("id", typeof postId);
     const post = useSelector((state) => selectPostById(state, postId));
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -29,13 +30,13 @@ const EditPost = () => {
                 title: title,
                 body: content,
             };
-            dispatch(fetchPostsUpdate({ payload: payload, postId: postId }));
+            dispatch(fetchPostsUpdate({ payload: payload, postId: parseInt(postId) }));
             navigate('/');
         }
     };
 
     const onDeletePostClicked = () => {
-        dispatch(fetchPostsDelete({ postId: postId }));
+        dispatch(fetchPostsDelete({ postId: parseInt(postId) }));
         navigate('/');
     };
 
